@@ -1,4 +1,6 @@
 const pool= require('../db.js');
+const createLog = require('./logs.service.js').createLog;
+
 const addUserAccess = async (
   username,
   mail_id,
@@ -21,29 +23,22 @@ const addUserAccess = async (
       [username, mail_id, role]
     );
 
-    // Audit log
-    // await connection.query(
-    //   `INSERT INTO audit_logs 
-    //   (actor_id, actor_role, action, affected_table, affected_record_id,
-    //    old_data, new_data, ip_address, user_agent, created_at)
-    //    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())`,
-    //   [
-    //     actorId,
-    //     actorRole,
-    //     'CREATE',
-    //     'userAccess',
-    //     result.insertId,
-    //     null,
-    //     JSON.stringify({ username, mail_id, role }),
-    //     ipAddress,
-    //     userAgent
-    //   ]
-    // );
-
+    await createLog(
+        actorId,
+        actorRole,
+        'CREATE',
+        'userAccess',
+        result.insertId,
+        null,
+        JSON.stringify({ username, mail_id, role }),
+        ipAddress,
+        userAgent
+      );
     await connection.commit();
     return result;
 
   } catch (err) {
+    console.log(err);
     await connection.rollback();
     throw err;
   } finally {
@@ -51,8 +46,41 @@ const addUserAccess = async (
   }
 };
 
-// const removeAccess =async(() => {});
-// const updateAccess =async(() => {});
+
+//------------------------------------------------------------------------------
+const updateAccess = async(
+  id,
+  username,
+  mail_id,
+  role,
+  actorId,
+  actorRole,
+  ipAddress,
+  userAgent
+) => {
+    const connection = await pool.promise().getConnection();
+
+  try {
+    await connection.beginTransaction();
+    // Insert user
+    const [result] = await connection.query(
+      `UPDATE userAccess 
+       SET username=?, mail_id=?, role=?, updated_at=NOW()
+       WHERE id=?`,
+      [username, mail_id, role,id]
+    );
+
+    await connection.commit();
+    return result;
+
+  } catch (err) {
+    console.log(err);
+    await connection.rollback();
+    throw err;
+  } finally {
+    connection.release();
+  }
+};
 
 
-module.exports = { addUserAccess };
+module.exports = { addUserAccess, updateAccess };
