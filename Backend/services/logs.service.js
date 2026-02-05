@@ -40,7 +40,6 @@ const createLog = async (log) => {
         );
     } catch (err) {
         console.error("❌ Failed to create log entry:", err.message);
-      
     }
 };
 

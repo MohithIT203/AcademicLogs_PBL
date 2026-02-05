@@ -1,0 +1,151 @@
+.calendar-card {
+  width: 100%;
+  max-width: 420px;
+  margin: auto;
+  background: #ffffff;
+  border-radius: 16px;
+  padding: 16px;
+  font-family: "Inter", sans-serif;
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.08);
+}
+
+/* HEADER */
+.calendar-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.calendar-header h2 {
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.calendar-header button {
+  border: none;
+  background: #f1f3f5;
+  border-radius: 10px;
+  padding: 8px 14px;
+  cursor: pointer;
+  font-size: 20px;
+}
+
+/* WEEKDAYS */
+.weekdays {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  margin-top: 16px;
+  font-size: 12px;
+  color: #777;
+  text-align: center;
+}
+
+/* GRID */
+.calendar-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.day {
+  min-height: 56px;
+  border-radius: 12px;
+  padding: 6px;
+  text-align: center;
+  font-size: 12px;
+  background: #f8f9fa;
+}
+
+.day.empty {
+  background: transparent;
+}
+
+.day .number {
+  font-weight: 600;
+  font-size: 14px;
+}
+
+.day .label {
+  display: block;
+  font-size: 10px;
+  margin-top: 2px;
+  text-transform: capitalize;
+}
+
+/* STATUS COLORS */
+.day.present {
+  background: #e6fff5;
+  color: #0ca678;
+}
+
+.day.absent {
+  background: #ffe8e8;
+  color: #e03131;
+}
+
+.day.late {
+  background: #fff4e6;
+  color: #f08c00;
+}
+
+/* LEGEND */
+.legend {
+  display: flex;
+  justify-content: space-around;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 18px;
+  font-size: 12px;
+}
+
+.dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  display: inline-block;
+  margin-right: 6px;
+}
+
+.dot.present { background: #0ca678; }
+.dot.absent { background: #e03131; }
+.dot.late { background: #f08c00; }
+
+/* 📱 MOBILE OPTIMIZATION */
+@media (max-width: 480px) {
+  .calendar-card {
+    padding: 12px;
+    border-radius: 14px;
+  }
+
+  .calendar-header h2 {
+    font-size: 16px;
+  }
+
+  .calendar-header button {
+    padding: 6px 10px;
+    font-size: 18px;
+  }
+
+  .weekdays {
+    font-size: 11px;
+  }
+
+  .calendar-grid {
+    gap: 6px;
+  }
+
+  .day {
+    min-height: 48px;
+    font-size: 11px;
+    padding: 4px;
+  }
+
+  .day .number {
+    font-size: 13px;
+  }
+
+  .day .label {
+    font-size: 9px;
+  }
+}

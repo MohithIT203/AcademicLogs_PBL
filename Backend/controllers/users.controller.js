@@ -3,8 +3,8 @@ const addUserAccess = require("../services/users.service.js").addUserAccess;
 const createUserAccess = async (req, res) => {
   const { username, mail_id, role } = req.body;
 
-  const actorId = 1;
-  const actorRole = "Admin";
+  const actorId = req.user.id;
+  const actorRole = req.user.role;
   const ipAddress = req.headers["x-forwarded-for"]?.split(",")[0] || req.socket.remoteAddress || "";
   const userAgent = req.headers["user-agent"] || "";
   
