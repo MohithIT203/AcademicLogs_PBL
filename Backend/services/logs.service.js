@@ -17,7 +17,7 @@ const createLog = async (log) => {
     } = log;
 
     try {
-        await pool.query(
+        await pool.promise().query(  //to return a promise and use async/await syntax
             `INSERT INTO audit_logs
             (actor_id, actor_role, action, affected_table, affected_record_id,
              status, message, old_data, new_data, error_details,

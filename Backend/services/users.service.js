@@ -9,44 +9,32 @@ const addUserAccess = async (
   actorId,
   actorRole,
   ipAddress,
-  userAgent
+  userAgent,
+  connection
 ) => {
-  const connection = await pool.promise().getConnection();
+  const [result] = await connection.query(
+    `INSERT INTO userAccess 
+     (username, mail_id, role, created_at, updated_at)
+     VALUES (?, ?, ?, NOW(), NOW())`,
+    [username, mail_id, role]
+  );
 
-  try {
-    await connection.beginTransaction();
+  await createLog({
+    actorId,
+    actorRole,
+    action: 'CREATE',
+    affectedTable: 'userAccess',
+    affectedRecordId: result.insertId,
+    status: 'SUCCESS',
+    message: 'User access created',
+    newData: JSON.stringify({ username, mail_id, role }),
+    ipAddress,
+    userAgent
+  });
 
-    // Insert user
-    const [result] = await connection.query(
-      `INSERT INTO userAccess 
-       (username, mail_id, role, created_at, updated_at)
-       VALUES (?, ?, ?, NOW(), NOW())`,
-      [username, mail_id, role]
-    );
-
-    //Create log entry
-    await createLog(
-        actorId,
-        actorRole,
-        'CREATE',
-        'userAccess',
-        result.insertId,
-        null,
-        JSON.stringify({ username, mail_id, role }),
-        ipAddress,
-        userAgent
-      );
-    await connection.commit();
-    return result;
-
-  } catch (err) {
-    console.log(err);
-    await connection.rollback();
-    throw err;
-  } finally {
-    connection.release();
-  }
+  return result;
 };
+
 
 //Update user
 const updateAccess = async (

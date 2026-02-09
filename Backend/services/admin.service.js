@@ -22,7 +22,6 @@ const addFaculty = async (
     );
 
     await addUserAccess(
-      connection,
       username,
       mail_id,
       'faculty',
@@ -44,39 +43,42 @@ const addFaculty = async (
 };
 
 //Service to Add new Student
-const addStudent = async (
-  student,
+const addStudent = async ({
+  username,
+  regno,
+  department,
+  mail_id,
   actorId,
-  actorRole,
-  ipAddress,
-  userAgent
-) => {
-  const { username, userId, department, mail_id } = student;
+  actorRole = '',
+  ipAddress = '',
+  userAgent = ''
+}) => {
   const connection = await pool.promise().getConnection();
 
   try {
     await connection.beginTransaction();
 
-    await connection.query(
-      `INSERT INTO students (user_id, department, joined_at, updated_at)
-       VALUES (?, ?, NOW(), NOW())`,
-      [userId, department]
-    );
-
-    await addUserAccess(
-      connection,
+    const userResult = await addUserAccess(
       username,
       mail_id,
       'student',
       actorId,
       actorRole,
       ipAddress,
-      userAgent
+      userAgent,
+      connection
+    );
+
+    const userId = userResult.insertId;
+
+    await connection.query(
+      `INSERT INTO students (user_id, regno, department, joined_at, updated_at)
+       VALUES (?, ?, ?, NOW(), NOW())`,
+      [userId, regno, department]
     );
 
     await connection.commit();
     return { success: true };
-
   } catch (err) {
     await connection.rollback();
     throw err;
@@ -84,6 +86,8 @@ const addStudent = async (
     connection.release();
   }
 };
+
+
 
 //Add course
 const addCourse = async (course) => {

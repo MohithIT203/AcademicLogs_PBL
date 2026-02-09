@@ -29,15 +29,19 @@ const addFaculty = async (req, res) => {
 
 //Add a student member
 const addStudent = async (req, res) => {
-  const { username, userId, department, mail_id } = req.body;
-    if (!username || !userId || !department || !mail_id) {
+    const actorId = req.user.id;
+  const actorRole = req.user.role;
+  const ipAddress = req.headers["x-forwarded-for"]?.split(",")[0] || req.socket.remoteAddress || "";
+  const userAgent = req.headers["user-agent"] || "";
+  const { username, regno, department, mail_id } = req.body;
+    if (!username ||!regno || !department || !mail_id) {
         return res.status(400).json({
             output: "Failed",
-            message: "username, userId, department and mail_id are required",
+            message: "username, regno, department and mail_id are required",
         });
     }
     try{
-        await StudentService.addStudent({ username, userId, department, mail_id });
+        await StudentService.addStudent({ username, regno, department, mail_id, actorId, actorRole, ipAddress, userAgent});
         res.status(201).json({
             output: "Success",
             message: "Student added successfully",
@@ -92,6 +96,7 @@ const getAllStudents = async (req, res) => {
         })
     }
 }
+
 //Get All Faculties
 const getAllFaculty = async (req, res) => {
     try{
@@ -110,6 +115,5 @@ const getAllFaculty = async (req, res) => {
     }
 }
 
-//dashboard
 
 module.exports = { addFaculty, addStudent, addCourse, getAllStudents, getAllFaculty };

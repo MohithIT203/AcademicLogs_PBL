@@ -4,6 +4,7 @@ const jwt = require("jsonwebtoken");
 
 const login = async (req, res) => { //google sign-in
   const { email } = req.body;
+  // console.log(email);
 
   if (!email) {
     return res.status(400).json({
@@ -26,7 +27,7 @@ const login = async (req, res) => { //google sign-in
       sameSite: 'none',
       maxAge: 24 * 60 * 60 * 1000,
     });
-    console.log(token);
+    // console.log(token);
     return res.status(200).json({
       output: "Success",
       message: "Login successful",

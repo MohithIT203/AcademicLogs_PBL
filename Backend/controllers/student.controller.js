@@ -2,7 +2,7 @@ const StudentService = require("../services/student.service");
 
 // Get periodic test scores for a student
 const getPtscores = async(req, res) => {
-    const studentId = req.user.id; //for testing
+    const studentId = req.params.id; //for testing
     try{
         const ptScores = await StudentService.getptScores(studentId);
         res.status(200).json({
@@ -19,7 +19,7 @@ const getPtscores = async(req, res) => {
 
 // Get semester scores for a student
 const getsemesterscores = async(req, res) => {
-    const studentId = req.user.id; //for testing
+    const studentId = req.params.id; //for testing
     try{
         const SemScores = await StudentService.getSemesterScores(studentId);
         res.status(200).json({
@@ -33,8 +33,23 @@ const getsemesterscores = async(req, res) => {
         });
     }
 }
-// const getuserAttendance = async(req,res)=>{
-//     const id = req.
-// }
 
-module.exports = { getPtscores, getsemesterscores };
+// get user attendance
+const getAttendance =async(req,res)=>{
+    const {studentId} = req.params; //for testing
+    try{
+        const attendance = await StudentService.getAttendance(studentId);
+        res.status(200).json({
+            message:"Successfully retrieved attendance",
+            data: attendance
+        });
+    } catch(err){
+        res.status(500).json({ 
+            message: "Error retrieving attendance",
+            error: err.message 
+        });
+    }
+}
+
+
+module.exports = { getPtscores, getsemesterscores, getAttendance };

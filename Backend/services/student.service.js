@@ -1,7 +1,7 @@
 const pool = require("../db.js");
 
 //Get Periodic Test Scores for a Student
-const getptScores = async (mail_id) => {
+const getptScores = async (id) => {
   const connection = await pool.promise().getConnection();
   try {
     const [rows] = await connection.query(
@@ -10,9 +10,9 @@ const getptScores = async (mail_id) => {
         JOIN students s ON u.id = s.user_id
         JOIN pt_exams p ON s.id = p.student_id
         JOIN courses c ON p.course_id = c.id
-        WHERE u.mail_id = ? AND u.role = 'student'
+        WHERE u.id = ? AND u.role = 'student'
       `,
-      [mail_id],
+      [id],
     );
     return rows;
   } catch (err) {
@@ -21,7 +21,7 @@ const getptScores = async (mail_id) => {
 };
 
 //Get semester Scores for a Student
-const getSemesterScores = async (mail_id) => {
+const getSemesterScores = async (id) => {
   const connection = await pool.promise().getConnection();
   try {
     const [rows] = await connection.query(
@@ -30,9 +30,9 @@ const getSemesterScores = async (mail_id) => {
         JOIN students s ON u.id = s.user_id
         JOIN endsemScores p ON s.id = p.student_id
         JOIN courses c ON p.course_id = c.id
-        WHERE u.mail_id = ? AND u.role = 'student'
+        WHERE u.id = ? AND u.role = 'student'
       `,
-      [mail_id],
+      [id],
     );
     return rows;
   } catch (err) {
@@ -43,7 +43,7 @@ const getSemesterScores = async (mail_id) => {
 };
 
 //get Attendance
-const getAttendance = async (mail_id) => {
+const getAttendance = async (id) => {
   const connection = await pool.promise().getConnection();
   try {
     const [rows] = await connection.query(
