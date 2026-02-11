@@ -1,4 +1,5 @@
 import { NavLink } from "react-router-dom";
+import { useAuth } from "../assets/pages/Context/AuthContext.jsx";
 import { 
   X,
   LayoutDashboard,
@@ -14,11 +15,11 @@ import {
  } from "lucide-react";
 
 const Sidebar = ({ open, setOpen }) => {
-    const userrole=localStorage.getItem("role")||"student";
- 
+   const { user } = useAuth();
+
   const items = {
   admin: [
-    { name: "Dashboard", path: "/", icon: LayoutDashboard },
+    { name: "Dashboard", path: "/dashboard", icon: LayoutDashboard },
     { name: "Users", path: "/users", icon: Users },
     { name: "Courses", path: "/courses", icon: BookOpen },
     { name: "Attendance", path: "/attendance", icon: ClipboardCheck },
@@ -40,7 +41,7 @@ const Sidebar = ({ open, setOpen }) => {
     { name: "My Exams", path: "/my-exams", icon: FileText },
   ],
 };
-    const navItemsRoleBased = items[userrole] || [];
+  const navItemsRoleBased = items[user?.role] || [];
   return (
     <>
       {open && (

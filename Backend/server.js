@@ -6,6 +6,7 @@ const studentRoutes = require('./routes/student.routes.js');
 // const logRoutes = require('./routes/admin.routes.js');
 const loginRoutes = require('./routes/login.routes.js');
 const adminRoutes = require('./routes/admin.routes.js');
+const { protect } = require('./middlewares/auth.middleware.js');
 
 require('dotenv').config();
 
@@ -22,6 +23,12 @@ app.use(studentRoutes);
 app.use(loginRoutes);
 app.use(adminRoutes);
 // app.use(logRoutes);
+app.get("/me", protect, (req, res) => {
+  res.json({
+    id: req.user.id,
+    role: req.user.role
+  });
+});
 
 app.listen(process.env.PORT, () => {
   console.log(`PORT CONNECTED AT ${process.env.PORT}`);

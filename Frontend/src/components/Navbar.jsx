@@ -19,10 +19,10 @@ const Navbar = ({ setOpen }) => {
 
       <div className="flex items-center gap-4">
         <span className="text-sm text-gray-600 hidden sm:block">
-          Mohith M
+          {}
         </span>
         <img
-          src=""
+          // src=""
           alt="profile"
           className="w-9 h-9 rounded-full border-2 border-blue-600"
         />
