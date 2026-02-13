@@ -1,6 +1,6 @@
 const jwt = require('jsonwebtoken');
 const cookieParser=require('cookie-parser');
-require('dotenv').config;
+require('dotenv').config();
 
 const protect = (req, res, next) => {
   const token = req.cookies.token;
@@ -9,11 +9,11 @@ const protect = (req, res, next) => {
   }
 
   try {
-    const user = jwt.verify(token, process.env.SECRET_KEY);
-    req.user = user;
+    const decoded = jwt.verify(token, process.env.SECRET_KEY);
+    req.user = decoded;
     next();
   } catch (err) {
-    return res.status(403).json({ message:"Authorization Token Required"});
+    return res.status(403).json({ message: "Invalid or expired token" });
   }
 };
 

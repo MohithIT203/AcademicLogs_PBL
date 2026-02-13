@@ -8,10 +8,6 @@ function App() {
 
   return (
     <>
-    {/* <Layout>
-      <h2 className="text-2xl font-semibold">Dashboard</h2>
-    </Layout> */}
-    {/* <Login/> */}
     <AppComponent/>
     </>
   )

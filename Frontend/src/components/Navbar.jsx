@@ -1,7 +1,9 @@
 // components/Navbar.jsx
 import { Menu } from "lucide-react";
+import { useAuth } from "../assets/pages/Context/AuthContext.jsx";
 
 const Navbar = ({ setOpen }) => {
+  const { user } = useAuth();
   return (
     <header className="h-16 bg-white flex items-center justify-between px-6">
       <div className="flex items-center gap-3">
@@ -19,7 +21,7 @@ const Navbar = ({ setOpen }) => {
 
       <div className="flex items-center gap-4">
         <span className="text-sm text-gray-600 hidden sm:block">
-          {}
+          {user?.name}
         </span>
         <img
           // src=""

@@ -15,7 +15,7 @@ const login = async (req, res) => { //google sign-in
   try {
     const result = await loginUser(email);
      const token = jwt.sign(
-      { id: result.data.id, role: result.data.role, mail_id:email },
+      { id: result.data.id, name:result.data.username, role: result.data.role, mail_id:email },
       process.env.SECRET_KEY,
       { expiresIn: '1d' }
     );
@@ -23,7 +23,7 @@ const login = async (req, res) => { //google sign-in
     res.cookie('token', token, {
       httpOnly: true,
       secure: false, // true in production
-      sameSite: 'none',
+      sameSite: 'lax',
       maxAge: 24 * 60 * 60 * 1000,
     });
     

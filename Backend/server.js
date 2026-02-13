@@ -23,10 +23,16 @@ app.use(studentRoutes);
 app.use(loginRoutes);
 app.use(adminRoutes);
 // app.use(logRoutes);
-app.get("/me", protect, (req, res) => {
+
+
+app.get("/me",protect, (req, res) => {
+   if (!req.user) {
+    return res.status(401).json({ message: "Unauthorized" });
+  }
   res.json({
     id: req.user.id,
-    role: req.user.role
+    role: req.user.role,
+    name:req.user.name,
   });
 });
 

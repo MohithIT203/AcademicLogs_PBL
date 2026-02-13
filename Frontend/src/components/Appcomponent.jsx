@@ -1,19 +1,20 @@
 import { BrowserRouter,Routes,Route } from "react-router-dom";
 import Login from "../assets/pages/Login/login.jsx"
 import Layout from "./Layout";
-import { AuthProvider } from "../assets/pages/Context/AuthContext.jsx";
-import { Users } from "lucide-react";
+import Users from "../assets/pages/Admin/users.jsx";
+import Dashboard from "../assets/pages/Admin/dashboard.jsx";
+
 
 function AppComponent(){
     return(<>
         {/* <BrowserRouter> */}
-        <AuthProvider>
+        <Routes> <Route path="/" element={<Login/>}/></Routes>
+        <Layout>
             <Routes>
-                <Route path="/" element={<Login/>}/>
-                <Route path="/dashboard" element={<Layout/>}/>
-                {/* <Route path="/users" element={<Users/>}/> */}
-            </Routes>  
-        </AuthProvider>      
+                <Route path="/dashboard" element={<Dashboard/>}/>
+                <Route path="/users" element={<Users/>}/>
+            </Routes>     
+        </Layout>   
         {/* </BrowserRouter> */}
     </>);
 }

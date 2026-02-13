@@ -62,7 +62,7 @@ const Sidebar = ({ open, setOpen }) => {
             <X size={20} />
           </button>
         </div>
-
+        <div className="flex flex-col justify-between h-[90%]">
         <nav className="p-5 space-y-1">
           {navItemsRoleBased.map((item) => (
             <NavLink
@@ -83,9 +83,10 @@ const Sidebar = ({ open, setOpen }) => {
           ))}
         </nav>
         <div className="p-5">
-          <button className="w-full bg-red-200 text-white py-2 rounded-lg hover:bg-red-300 transition">
+          <button className="w-full bg-red-500 text-white py-2 rounded-lg hover:bg-red-600 transition">
             Logout
           </button>
+        </div>
         </div>
       </aside>
     </>

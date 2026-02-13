@@ -34,9 +34,7 @@ const handlelogin = async (loginemail) => {
         { email: loginId, },
         { withCredentials: true }
       );
-      // console.log("Login response:", response.data.role);
       localStorage.setItem("role", response.data.role);
-      // console.log(localStorage.getItem("role"));
      navigate("/dashboard", { state: response.data });
         
   } catch (err) {
