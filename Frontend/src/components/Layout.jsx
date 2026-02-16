@@ -1,9 +1,10 @@
 // components/Layout.jsx
 import { useState } from "react";
+import { Outlet } from "react-router-dom";
 import Navbar from "./Navbar";
 import Sidebar from "./Sidebar";
 
-const Layout = ({ children }) => {
+const Layout = () => {
   const [open, setOpen] = useState(false);
 
   return (
@@ -12,7 +13,9 @@ const Layout = ({ children }) => {
 
       <div className="flex flex-col flex-1">
         <Navbar setOpen={setOpen} />
-        <main className="p-6 overflow-y-auto">{children}</main>
+        <main className="p-6 overflow-y-auto">
+          <Outlet /> 
+        </main>
       </div>
     </div>
   );
