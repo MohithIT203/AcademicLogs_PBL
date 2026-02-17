@@ -43,4 +43,22 @@ const createLog = async (log) => {
     }
 };
 
-module.exports = { createLog };
+const getLogs = async () => {
+    try {
+    const [rows] = await pool.promise().query(
+      `SELECT id, actor_id, actor_role, action,
+              affected_table, affected_record_id, created_at
+       FROM audit_logs
+       ORDER BY created_at DESC
+       LIMIT 10`
+    );
+
+    return rows;
+  } catch (err) {
+    console.error(err);
+    throw err;
+  }    
+}
+
+
+module.exports = { createLog, getLogs };

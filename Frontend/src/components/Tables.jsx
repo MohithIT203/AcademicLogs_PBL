@@ -1,13 +1,19 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
 
-function Tables({ data, activeTab }) {
+function AdminTable({
+  data = [],
+  columns = [],
+  basePath = "",
+  loadingText = "Loading...",
+  emptyText = "No data found.",
+}) {
   const navigate = useNavigate();
 
   if (!data) {
     return (
       <div className="p-10 text-center text-blue-500">
-        Loading users...
+        {loadingText}
       </div>
     );
   }
@@ -15,7 +21,7 @@ function Tables({ data, activeTab }) {
   if (data.length === 0) {
     return (
       <div className="p-10 text-center text-gray-500">
-        No {activeTab} found.
+        {emptyText}
       </div>
     );
   }
@@ -29,37 +35,32 @@ function Tables({ data, activeTab }) {
           <table className="w-full text-sm text-left">
             <thead className="bg-blue-600 text-white text-xs uppercase">
               <tr>
-                <th className="px-6 py-4">Name</th>
-                <th className="px-6 py-4">Email</th>
-                <th className="px-6 py-4">Department</th>
-                <th className="px-6 py-4">Updated</th>
+                {columns.map((col) => (
+                  <th key={col.key} className="px-6 py-4">
+                    {col.label}
+                  </th>
+                ))}
               </tr>
             </thead>
+
             <tbody className="divide-y divide-blue-50">
-              {data.map((user) => (
+              {data.map((row) => (
                 <tr
-                  key={user.id}
-                  onClick={() =>
-                    navigate(
-                      activeTab === "students"
-                        ? `/students/${user.id}`
-                        : `/faculty/${user.id}`
-                    )
-                  }
-                  className="cursor-pointer hover:bg-blue-50 transition"
+                  key={row.id}
+                  onClick={() => basePath && navigate(`${basePath}/${row.id}`)}
+                  className={`${
+                    basePath
+                      ? "cursor-pointer hover:bg-blue-50 transition"
+                      : ""
+                  }`}
                 >
-                  <td className="px-6 py-4 font-medium text-gray-800">
-                    {user.username}
-                  </td>
-                  <td className="px-6 py-4 text-gray-600">
-                    {user.mail_id}
-                  </td>
-                  <td className="px-6 py-4 text-gray-600">
-                    {user.department}
-                  </td>
-                  <td className="px-6 py-4 text-gray-500">
-                    {new Date(user.updated_at).toLocaleDateString()}
-                  </td>
+                  {columns.map((col) => (
+                    <td key={col.key} className="px-6 py-4 text-gray-700">
+                      {col.render
+                        ? col.render(row[col.key], row)
+                        : row[col.key]}
+                    </td>
+                  ))}
                 </tr>
               ))}
             </tbody>
@@ -68,31 +69,26 @@ function Tables({ data, activeTab }) {
 
         {/* Mobile Cards */}
         <div className="md:hidden divide-y flex flex-col">
-          {data.map((user) => (
+          {data.map((row) => (
             <div
-              key={user.id}
-              onClick={() =>
-                navigate(
-                  activeTab === "students"
-                    ? `/students/${user.id}`
-                    : `/faculty/${user.id}`
-                )
-              }
-              className="p-4 hover:bg-blue-50 cursor-pointer transition"
+              key={row.id}
+              onClick={() => basePath && navigate(`${basePath}/${row.id}`)}
+              className={`p-4 ${
+                basePath
+                  ? "hover:bg-blue-50 cursor-pointer transition"
+                  : ""
+              }`}
             >
-              <h3 className="font-semibold text-blue-700">
-                {user.username}
-              </h3>
-              <p className="text-sm text-gray-600 mt-1">
-                {user.mail_id}
-              </p>
-              <p className="text-sm text-gray-600">
-                {user.department}
-              </p>
-              <p className="text-xs text-gray-400 mt-2">
-                Last Updated:{" "}
-                {new Date(user.updated_at).toLocaleDateString()}
-              </p>
+              {columns.map((col) => (
+                <div key={col.key} className="mb-2">
+                  <p className="text-xs text-gray-400">{col.label}</p>
+                  <p className="text-sm text-gray-700 font-medium">
+                    {col.render
+                      ? col.render(row[col.key], row)
+                      : row[col.key]}
+                  </p>
+                </div>
+              ))}
             </div>
           ))}
         </div>
@@ -102,4 +98,4 @@ function Tables({ data, activeTab }) {
   );
 }
 
-export default Tables;
+export default AdminTable;

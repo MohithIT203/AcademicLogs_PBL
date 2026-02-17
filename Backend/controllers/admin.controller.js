@@ -4,15 +4,15 @@ const CourseService = require("../services/admin.service");
 
 //Add a faculty member
 const addFaculty = async (req, res) => {
-  const { username, userId, department, mail_id } = req.body;
-  if (!username || !userId || !department || !mail_id) {
+  const { username, user_id, department, mail_id } = req.body;
+  if (!username || !user_id || !department || !mail_id) {
     return res.status(400).json({
       output: "Failed",
-      message: "username, userId, department and mail_id are required",
+      message: "username, user_id, department and mail_id are required",
     });
   }
   try {
-    await facultyService.addFaculty({ username, userId, department, mail_id });
+    await facultyService.addFaculty({ username, user_id, department, mail_id });
     res.status(201).json({
       output: "Success",
       message: "Faculty added successfully",
@@ -151,11 +151,28 @@ const getAllFaculty = async (req, res) => {
   }
 };
 
+const getStats = async (req, res) => {
+  try {
+    const stats = await facultyService.getStats();
+    res.status(200).json({
+      output: "Success",
+      message: "Stats retrieved successfully",
+      data: stats,
+    });
+  } catch (err) {
+    res.status(500).json({
+      output: "Failed",
+      message: "Error retrieving stats",
+      error: err.message,
+    });
+  }
+};
 module.exports = {
   addFaculty,
   addStudent,
   addCourse,
   getAllStudents,
   getAllFaculty,
-  getAllCourses
+  getAllCourses,
+  getStats,
 };

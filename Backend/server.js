@@ -6,6 +6,7 @@ const studentRoutes = require('./routes/student.routes.js');
 // const logRoutes = require('./routes/admin.routes.js');
 const loginRoutes = require('./routes/login.routes.js');
 const adminRoutes = require('./routes/admin.routes.js');
+const AcademicLogsRoutes = require('./routes/logs.routes.js');
 const { protect } = require('./middlewares/auth.middleware.js');
 
 require('dotenv').config();
@@ -22,7 +23,7 @@ app.use(cookieParser());
 app.use(studentRoutes);
 app.use(loginRoutes);
 app.use(adminRoutes);
-// app.use(logRoutes);
+app.use(AcademicLogsRoutes);
 
 
 app.get("/me",protect, (req, res) => {

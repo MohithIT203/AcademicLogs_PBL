@@ -9,7 +9,7 @@ const addFaculty = async (
   ipAddress,
   userAgent
 ) => {
-  const { username, userId, department, mail_id } = faculty;
+  const { username, user_id, department, mail_id } = faculty;
   const connection = await pool.promise().getConnection();
 
   try {
@@ -18,7 +18,7 @@ const addFaculty = async (
     await connection.query(
       `INSERT INTO faculty (user_id, department, joined_at, updated_at)
        VALUES (?, ?, NOW(), NOW())`,
-      [userId, department]
+      [user_id, department]
     );
 
     await addUserAccess(
@@ -142,4 +142,27 @@ const allFaculties = async () => {
     }
 }
 
-module.exports = { addFaculty, addStudent, addCourse, allCourses, allStudents, allFaculties };
+const getStats = async()=>{
+ try {
+    const [[students]] = await pool.promise().query(
+      "SELECT COUNT(*) as count FROM students"
+    );
+
+    const [[faculty]] = await pool.promise().query(
+      "SELECT COUNT(*) as count FROM faculty"
+    );
+
+    const [[courses]] = await pool.promise().query(
+      "SELECT COUNT(*) as count FROM courses"
+    );
+
+    const [[logs]] = await pool.promise().query(
+      "SELECT COUNT(*) as count FROM audit_logs"
+    );
+    return { totalStudents: students.count, totalFaculty: faculty.count, totalCourses: courses.count, totalLogs: logs.count };
+  } catch (err) {
+    throw err;
+  }
+}
+
+module.exports = { addFaculty, addStudent, addCourse, allCourses, allStudents, allFaculties,getStats };
