@@ -8,7 +8,7 @@ import {
   ClipboardList,
 } from "lucide-react";
 
-function Dashboard() {
+function AdminDashboard() {
   const navigate = useNavigate();
 
   const [stats, setStats] = useState({
@@ -200,4 +200,4 @@ function Dashboard() {
   );
 }
 
-export default Dashboard;
+export default AdminDashboard;
