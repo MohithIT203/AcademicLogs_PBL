@@ -1,7 +1,9 @@
-const pool= require('../db.js');
+const pool = require('../db.js');
 const createLog = require('./logs.service.js').createLog;
 
-//Add new User
+// Add new User
+// NOTE: `connection` is optional. Pass it when calling inside a transaction
+// (e.g. from addStudent). Omit it for standalone inserts.
 const addUserAccess = async (
   username,
   mail_id,
@@ -10,9 +12,11 @@ const addUserAccess = async (
   actorRole,
   ipAddress,
   userAgent,
-  connection
+  connection  // optional — pass the transaction connection when inside a tx
 ) => {
-  const [result] = await connection.query(
+  const db = connection || pool.promise();
+
+  const [result] = await db.query(
     `INSERT INTO userAccess 
      (username, mail_id, role, created_at, updated_at)
      VALUES (?, ?, ?, NOW(), NOW())`,
@@ -26,17 +30,16 @@ const addUserAccess = async (
     affectedTable: 'userAccess',
     affectedRecordId: result.insertId,
     status: 'SUCCESS',
-    message: 'User access created',
+    message: `User access created for ${username} (${role})`,
     newData: JSON.stringify({ username, mail_id, role }),
     ipAddress,
-    userAgent
+    userAgent,
   });
 
   return result;
 };
 
-
-//Update user
+// Update existing user
 const updateAccess = async (
   id,
   username,
@@ -58,7 +61,7 @@ const updateAccess = async (
     );
 
     if (oldRows.length === 0) {
-      throw new Error("User not found");
+      throw new Error('User not found');
     }
 
     const oldData = oldRows[0];
@@ -69,7 +72,7 @@ const updateAccess = async (
       oldData.role === role
     ) {
       await connection.rollback();
-      return { success: true, message: "No changes detected" };
+      return { success: true, message: 'No changes detected' };
     }
 
     await connection.query(
@@ -79,29 +82,44 @@ const updateAccess = async (
       [username, mail_id, role, id]
     );
 
-    await createLog(
+    // FIX: createLog takes a single object — not positional args
+    await createLog({
       actorId,
       actorRole,
-      'UPDATE',
-      'userAccess',
-      id,
-      JSON.stringify(oldData),
-      JSON.stringify({ username, mail_id, role }),
+      action: 'UPDATE',
+      affectedTable: 'userAccess',
+      affectedRecordId: id,
+      status: 'SUCCESS',
+      message: `User ${id} updated`,
+      oldData: JSON.stringify(oldData),
+      newData: JSON.stringify({ username, mail_id, role }),
       ipAddress,
-      userAgent
-    );
+      userAgent,
+    });
 
     await connection.commit();
     return { success: true };
 
   } catch (err) {
     await connection.rollback();
+
+    await createLog({
+      actorId,
+      actorRole,
+      action: 'UPDATE',
+      affectedTable: 'userAccess',
+      affectedRecordId: id,
+      status: 'FAILURE',
+      message: `Failed to update user ${id}: ${err.message}`,
+      errorDetails: err.message,
+      ipAddress,
+      userAgent,
+    });
+
     throw err;
   } finally {
     connection.release();
   }
 };
-
-
 
 module.exports = { addUserAccess, updateAccess };

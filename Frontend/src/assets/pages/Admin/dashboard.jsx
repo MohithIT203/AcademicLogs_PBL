@@ -122,7 +122,7 @@ function AdminDashboard() {
               </div>
 
               <div
-                onClick={() => navigate("/logs")}
+                onClick={() => navigate("/audit-logs")}
                 className="bg-white rounded-xl shadow-md border border-blue-100 p-6 flex justify-between items-center hover:shadow-lg cursor-pointer transition"
               >
                 <div>

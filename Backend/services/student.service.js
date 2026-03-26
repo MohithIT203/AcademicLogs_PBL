@@ -2,30 +2,28 @@ const pool = require("../db.js");
 
 //Get Periodic Test Scores for a Student
 const getptScores = async (id) => {
-  const connection = await pool.promise().getConnection();
   try {
-    const [rows] = await connection.query(
-      `SELECT u.id, u.username, s.user_id ,s.regno, s.department, p.course_id, c.semester, p.pt_test_no, p.marks
-        FROM userAccess u
-        JOIN students s ON u.id = s.user_id
-        JOIN pt_exams p ON s.id = p.student_id
-        JOIN courses c ON p.course_id = c.id
-        WHERE u.id = ? AND u.role = 'student'
-      `,
-      [id],
+    const [rows] = await pool.promise().query(
+      `SELECT u.id, u.username, s.regno, s.department,
+              p.course_id, c.semester, p.pt_test_no, p.marks
+       FROM userAccess u
+       JOIN students s ON u.id = s.user_id
+       JOIN pt_exams p ON s.id = p.student_id
+       JOIN courses c ON p.course_id = c.id
+       WHERE u.id = ? AND u.role = 'student'`,
+      [id]
     );
+
     return rows;
   } catch (err) {
     throw err;
   }
 };
-
 //Get semester Scores for a Student
 const getSemesterScores = async (id) => {
-  const connection = await pool.promise().getConnection();
   try {
-    const [rows] = await connection.query(
-      `SELECT u.id, u.username, s.user_id ,s.regno, s.department, p.course_id,e.semester_no, p.marks
+    const [rows] = await pool.promise().query(
+      `SELECT u.id, u.username, s.user_id ,s.regno, s.department, p.course_id,p.semester_no, p.grade
         FROM userAccess u
         JOIN students s ON u.id = s.user_id
         JOIN endsemScores p ON s.id = p.student_id
@@ -37,16 +35,13 @@ const getSemesterScores = async (id) => {
     return rows;
   } catch (err) {
     throw err;
-  } finally {
-    connection.release();
   }
 };
 
 //get Attendance
 const getAttendance = async (id) => {
-  const connection = await pool.promise().getConnection();
   try {
-    const [rows] = await connection.query(
+    const [rows] = await pool.promise().query(
       `
   SELECT 
     u.id AS user_id,

@@ -29,7 +29,10 @@ const login = async (req, res) => { //google sign-in
     
     return res.status(200).json({
       output: "Success",
-      message: "Login successful"
+      message: "Login successful",
+      role: result.data.role,
+      id: result.data.id,
+      username: result.data.username
     });
 
   } catch (err) {

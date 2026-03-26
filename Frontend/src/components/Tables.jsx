@@ -7,6 +7,9 @@ function AdminTable({
   basePath = "",
   loadingText = "Loading...",
   emptyText = "No data found.",
+  title = "",
+  showStats = false,
+  statsConfig = {},
 }) {
   const navigate = useNavigate();
 
@@ -27,20 +30,19 @@ function AdminTable({
   }
 
   return (
-    <div className="px-4 md:px-10 py-6">
-
+    <div className="w-full">
       {/* ================= DESKTOP TABLE ================= */}
       <div className="hidden md:block overflow-x-auto">
         <div className="min-w-[700px] bg-white rounded-xl shadow-md overflow-hidden border border-gray-200">
           <table className="w-full border-collapse text-sm">
             
             {/* Header */}
-            <thead className="bg-slate-100 text-gray-700">
+            <thead className="bg-gradient-to-r from-green-50 to-green-100 text-gray-700">
               <tr>
                 {columns.map((col) => (
                   <th
                     key={col.key}
-                    className="px-6 py-3 font-semibold text-center"
+                    className="px-6 py-4 font-semibold text-left text-gray-800"
                   >
                     {col.label}
                   </th>
@@ -58,14 +60,14 @@ function AdminTable({
                   }
                   className={`${
                     basePath
-                      ? "cursor-pointer hover:bg-gray-50 transition"
-                      : ""
+                      ? "cursor-pointer hover:bg-green-50 transition-colors"
+                      : "hover:bg-gray-50 transition-colors"
                   }`}
                 >
                   {columns.map((col) => (
                     <td
                       key={col.key}
-                      className="px-6 py-4 text-center text-gray-700 whitespace-nowrap overflow-hidden text-ellipsis max-w-[200px]"
+                      className="px-6 py-4 text-gray-700 whitespace-nowrap"
                     >
                       {col.render
                         ? col.render(row[col.key], row)
@@ -81,25 +83,25 @@ function AdminTable({
       </div>
 
       {/* ================= MOBILE CARDS ================= */}
-      <div className="md:hidden flex flex-col gap-3 mt-2">
+      <div className="md:hidden flex flex-col gap-4 mt-4">
         {data.map((row, index) => (
           <div
             key={row.id || index}
             onClick={() =>
               basePath && navigate(`${basePath}/${row.id}`)
             }
-            className={`p-4 bg-white rounded-xl shadow-sm border border-gray-200 ${
+            className={`p-5 bg-white rounded-lg shadow border border-gray-200 ${
               basePath
-                ? "hover:bg-gray-50 cursor-pointer transition"
-                : ""
+                ? "hover:bg-green-50 cursor-pointer transition-colors"
+                : "hover:bg-gray-50 transition-colors"
             }`}
           >
             {columns.map((col) => (
-              <div key={col.key} className="mb-2">
-                <p className="text-xs text-gray-400">
+              <div key={col.key} className="mb-3 flex justify-between items-center">
+                <p className="text-xs font-semibold text-gray-500 uppercase">
                   {col.label}
                 </p>
-                <p className="text-sm font-medium text-gray-700">
+                <p className="text-sm font-medium text-gray-800">
                   {col.render
                     ? col.render(row[col.key], row)
                     : row[col.key]}
@@ -109,7 +111,6 @@ function AdminTable({
           </div>
         ))}
       </div>
-
     </div>
   );
 }

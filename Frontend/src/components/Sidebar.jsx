@@ -29,19 +29,24 @@ const Sidebar = ({ open, setOpen }) => {
   ],
 
   faculty: [
-    { name: "Dashboard", path: "/", icon: LayoutDashboard },
-    { name: "Attendance", path: "/attendance", icon: CalendarCheck },
-    { name: "Exams / Marks", path: "/marks", icon: NotebookPen },
+    { name: "Dashboard", path: "/faculty/dashboard", icon: LayoutDashboard },
+    { name: "Attendance", path: "/faculty/attendance", icon: CalendarCheck },
+    { name: "Exams / Marks", path: "/faculty/marks", icon: NotebookPen },
   ],
 
   student: [
-    { name: "Dashboard", path: "/", icon: LayoutDashboard },
-    { name: "My Courses", path: "/my-courses", icon: GraduationCap },
-    { name: "My Attendance", path: "/my-attendance", icon: ClipboardCheck },
-    { name: "My Exams", path: "/my-exams", icon: FileText },
+    { name: "Dashboard", path: "/student/dashboard", icon: LayoutDashboard },
+    { name: "My Courses", path: "/student/courses", icon: GraduationCap },
+    { name: "My Attendance", path: "/student/attendance", icon: ClipboardCheck },
+    { name: "PT Scores", path: "/student/ptscores", icon: NotebookPen },
+    { name: "Semester Scores", path: "/student/semesterscores", icon: FileText },
+    // { name: "Exams", path: "/student/exams", icon: BookOpen },
   ],
 };
   const navItemsRoleBased = items[user?.role] || [];
+  function handlelogout(){
+    
+  }
   return (
     <>
       {open && (
@@ -68,6 +73,7 @@ const Sidebar = ({ open, setOpen }) => {
             <NavLink
               key={item.name}
               to={item.path}
+              onClick={() => setOpen(false)}
               className={({ isActive }) =>
                 `flex items-center gap-3 px-4 py-2 rounded-lg text-sm font-medium
                 transition ${
@@ -83,7 +89,8 @@ const Sidebar = ({ open, setOpen }) => {
           ))}
         </nav>
         <div className="p-5">
-          <button className="w-full bg-red-500 text-white text-sm font-meduim py-2 rounded-lg hover:bg-red-600 transition">
+          <button className="w-full bg-red-500 text-white text-sm font-medium py-2 rounded-lg hover:bg-red-600 transition"
+          onClick={handlelogout}>
             Logout
           </button>
         </div>

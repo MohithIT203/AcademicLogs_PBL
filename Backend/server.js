@@ -7,8 +7,9 @@ const studentRoutes = require('./routes/student.routes.js');
 const loginRoutes = require('./routes/login.routes.js');
 const adminRoutes = require('./routes/admin.routes.js');
 const AcademicLogsRoutes = require('./routes/logs.routes.js');
+const facultyRoutes = require('./routes/faculty.routes.js');
 const { protect } = require('./middlewares/auth.middleware.js');
-
+const AdminRoutes = require('./routes/admin.settings.routes.js');
 require('dotenv').config();
 
 const app = express();
@@ -23,9 +24,10 @@ app.use(cookieParser());
 app.use(studentRoutes);
 app.use(loginRoutes);
 app.use(adminRoutes);
+app.use("/faculty", facultyRoutes);
 app.use(AcademicLogsRoutes);
 
-
+app.use(AdminRoutes);
 app.get("/me",protect, (req, res) => {
    if (!req.user) {
     return res.status(401).json({ message: "Unauthorized" });

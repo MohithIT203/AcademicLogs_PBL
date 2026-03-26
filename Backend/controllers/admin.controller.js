@@ -2,8 +2,17 @@ const facultyService = require("../services/admin.service");
 const StudentService = require("../services/admin.service");
 const CourseService = require("../services/admin.service");
 
-//Add a faculty member
+// Add a faculty member
 const addFaculty = async (req, res) => {
+  // FIX: extract audit context just like addStudent does
+  const actorId   = req.user.id;
+  const actorRole = req.user.role;
+  const ipAddress =
+    req.headers["x-forwarded-for"]?.split(",")[0] ||
+    req.socket.remoteAddress ||
+    "";
+  const userAgent = req.headers["user-agent"] || "";
+
   const { username, user_id, department, mail_id } = req.body;
   if (!username || !user_id || !department || !mail_id) {
     return res.status(400).json({
@@ -12,7 +21,16 @@ const addFaculty = async (req, res) => {
     });
   }
   try {
-    await facultyService.addFaculty({ username, user_id, department, mail_id });
+    await facultyService.addFaculty({
+      username,
+      user_id,
+      department,
+      mail_id,
+      actorId,
+      actorRole,
+      ipAddress,
+      userAgent,
+    });
     res.status(201).json({
       output: "Success",
       message: "Faculty added successfully",
@@ -26,15 +44,16 @@ const addFaculty = async (req, res) => {
   }
 };
 
-//Add a student member
+// Add a student member
 const addStudent = async (req, res) => {
-  const actorId = req.user.id;
+  const actorId   = req.user.id;
   const actorRole = req.user.role;
   const ipAddress =
     req.headers["x-forwarded-for"]?.split(",")[0] ||
     req.socket.remoteAddress ||
     "";
   const userAgent = req.headers["user-agent"] || "";
+
   const { username, regno, department, mail_id } = req.body;
   if (!username || !regno || !department || !mail_id) {
     return res.status(400).json({
@@ -66,14 +85,13 @@ const addStudent = async (req, res) => {
   }
 };
 
-//Add a course
+// Add a course
 const addCourse = async (req, res) => {
   const { courseName, courseCode, department, semester, credits } = req.body;
   if (!courseName || !courseCode || !department || !semester || !credits) {
     return res.status(400).json({
       output: "Failed",
-      message:
-        "courseName, courseCode, department, semester and credits are required",
+      message: "courseName, courseCode, department, semester and credits are required",
     });
   }
   try {
@@ -97,7 +115,7 @@ const addCourse = async (req, res) => {
   }
 };
 
-//Get all students
+// Get all courses
 const getAllCourses = async (req, res) => {
   try {
     const courses = await CourseService.allCourses();
@@ -115,7 +133,7 @@ const getAllCourses = async (req, res) => {
   }
 };
 
-//Get all students
+// Get all students
 const getAllStudents = async (req, res) => {
   try {
     const students = await StudentService.allStudents();
@@ -133,7 +151,7 @@ const getAllStudents = async (req, res) => {
   }
 };
 
-//Get All Faculties
+// Get all faculties
 const getAllFaculty = async (req, res) => {
   try {
     const faculty = await facultyService.allFaculties();
@@ -167,6 +185,7 @@ const getStats = async (req, res) => {
     });
   }
 };
+
 module.exports = {
   addFaculty,
   addStudent,

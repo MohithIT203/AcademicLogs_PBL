@@ -1,8 +1,16 @@
 const StudentService = require("../services/student.service");
-
+const CourseService =require("../services/faculty.service")
 // Get periodic test scores for a student
 const getPtscores = async(req, res) => {
-    const studentId = req.params.id; //for testing
+    const studentId = req.params.id; // Get from URL params
+    
+    if (!studentId) {
+        return res.status(400).json({ 
+            message: "Student ID is required",
+            error: "ID parameter missing" 
+        });
+    }
+    
     try{
         const ptScores = await StudentService.getptScores(studentId);
         res.status(200).json({
@@ -19,7 +27,15 @@ const getPtscores = async(req, res) => {
 
 // Get semester scores for a student
 const getsemesterscores = async(req, res) => {
-    const studentId = req.params.id; //for testing
+    const studentId = req.params.id;
+    
+    if (!studentId) {
+        return res.status(400).json({ 
+            message: "Student ID is required",
+            error: "ID parameter missing" 
+        });
+    }
+    
     try{
         const SemScores = await StudentService.getSemesterScores(studentId);
         res.status(200).json({
@@ -35,8 +51,16 @@ const getsemesterscores = async(req, res) => {
 }
 
 // get user attendance
-const getAttendance =async(req,res)=>{
-    const {studentId} = req.params; //for testing
+const getAttendance = async(req, res) => {
+    const studentId = req.params.id; // Changed from destructuring
+    
+    if (!studentId) {
+        return res.status(400).json({ 
+            message: "Student ID is required",
+            error: "ID parameter missing" 
+        });
+    }
+    
     try{
         const attendance = await StudentService.getAttendance(studentId);
         res.status(200).json({
@@ -51,5 +75,13 @@ const getAttendance =async(req,res)=>{
     }
 }
 
+// const getCourses = async (req, res) => {
+//   try {
+//     const result = await CourseService.allCourses();
+//     res.status(200).json({ message: "Success", data: result.courses });
+//   } catch (err) {
+//     res.status(500).json({ message: "Error retrieving courses", error: err.message });
+//   }
+// };
 
 module.exports = { getPtscores, getsemesterscores, getAttendance };

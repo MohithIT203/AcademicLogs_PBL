@@ -1,5 +1,6 @@
 const jwt = require('jsonwebtoken');
 const cookieParser=require('cookie-parser');
+const db = require("../db"); // your mysql2/promise pool
 require('dotenv').config();
 
 const protect = (req, res, next) => {
@@ -17,4 +18,18 @@ const protect = (req, res, next) => {
   }
 };
 
-module.exports = {protect};
+const checkEditPermission = async (req, res, next) => {
+  const [rows] = await db.promise().query(
+    "SELECT setting_value FROM AcademicLogs.system_settings WHERE setting_key = 'editEnabled'"
+  );
+  const enabled = rows[0]?.setting_value === "true";
+  if (!enabled) {
+    return res.status(403).json({
+      output: "Failed",
+      message: "Record editing is currently disabled by the administrator."
+    });
+  }
+  next();
+};
+
+module.exports = { protect, checkEditPermission };

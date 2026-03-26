@@ -1,34 +1,42 @@
 const pool = require("../db.js");
 const { addUserAccess } = require("./users.service.js");
 
-//Service to Add new Faculty
-const addFaculty = async (
-  faculty,
+// Add new Faculty
+const addFaculty = async ({
+  username,
+  user_id,
+  department,
+  mail_id,
   actorId,
-  actorRole,
-  ipAddress,
-  userAgent
-) => {
-  const { username, user_id, department, mail_id } = faculty;
+  actorRole = '',
+  ipAddress = '',
+  userAgent = '',
+}) => {
   const connection = await pool.promise().getConnection();
 
   try {
     await connection.beginTransaction();
 
-    await connection.query(
-      `INSERT INTO faculty (user_id, department, joined_at, updated_at)
-       VALUES (?, ?, NOW(), NOW())`,
-      [user_id, department]
-    );
-
-    await addUserAccess(
+    // FIX: addUserAccess needs a connection when inside a transaction,
+    // and user_id from the body is the external ID — we actually create
+    // the userAccess row here and use its insertId for the faculty table.
+    const userResult = await addUserAccess(
       username,
       mail_id,
       'faculty',
       actorId,
       actorRole,
       ipAddress,
-      userAgent
+      userAgent,
+      connection   // pass the transaction connection
+    );
+
+    const userId = userResult.insertId;
+
+    await connection.query(
+      `INSERT INTO faculty (user_id, department, joined_at, updated_at)
+       VALUES (?, ?, NOW(), NOW())`,
+      [userId, department]
     );
 
     await connection.commit();
@@ -42,7 +50,7 @@ const addFaculty = async (
   }
 };
 
-//Service to Add new Student
+// Add new Student
 const addStudent = async ({
   username,
   regno,
@@ -51,7 +59,7 @@ const addStudent = async ({
   actorId,
   actorRole = '',
   ipAddress = '',
-  userAgent = ''
+  userAgent = '',
 }) => {
   const connection = await pool.promise().getConnection();
 
@@ -87,82 +95,78 @@ const addStudent = async ({
   }
 };
 
-//all courses
-const allCourses=async()=>{
-    try{
-      const [ courses ] = await pool.promise().query(
-        `SELECT id,course_code,course_name,department,semester,credits FROM courses`
-      );
-      return { success: true, courses };
-    }catch(err){
-      throw err;
-    }
-}
-
-//Add course
-const addCourse = async (course) => {
-    const { courseName, courseCode, department, semester, credits } = course;
-    try {
-        await pool.promise().query(
-            `INSERT INTO courses (course_code, course_name, department, semester, credits, created_at, updated_at)
-             VALUES (?, ?, ?, ?, ?, NOW(), NOW())`,
-            [courseCode, courseName, department, semester, credits]
-        );
-        return { success: true };
-    } catch (err) {
-        throw err;
-    }
-}
-
-//all students
-const allStudents = async () => {
-    try {
-        const [rows] = await pool.promise().query(
-            `SELECT s.id, u.username, s.department, u.mail_id, s.department, s.updated_at
-             FROM students s
-             JOIN userAccess u ON s.user_id = u.id`
-        );
-        return { success: true, students: rows };
-    } catch (err) {
-        throw err;
-    }
-}
-
-//all Faculties
-const allFaculties = async () => {
-    try {
-        const [rows] = await pool.promise().query(
-            `SELECT s.id, u.username, s.department, u.mail_id, s.department, s.updated_at
-             FROM faculty s
-             JOIN userAccess u ON s.user_id = u.id`
-        );
-        return { success: true, faculty: rows };
-    } catch (err) {
-        throw err;
-    }
-}
-
-const getStats = async()=>{
- try {
-    const [[students]] = await pool.promise().query(
-      "SELECT COUNT(*) as count FROM students"
+// All courses
+const allCourses = async () => {
+  try {
+    const [courses] = await pool.promise().query(
+      `SELECT id, course_code, course_name, department, semester, credits FROM courses`
     );
-
-    const [[faculty]] = await pool.promise().query(
-      "SELECT COUNT(*) as count FROM faculty"
-    );
-
-    const [[courses]] = await pool.promise().query(
-      "SELECT COUNT(*) as count FROM courses"
-    );
-
-    const [[logs]] = await pool.promise().query(
-      "SELECT COUNT(*) as count FROM audit_logs"
-    );
-    return { totalStudents: students.count, totalFaculty: faculty.count, totalCourses: courses.count, totalLogs: logs.count };
+    return { success: true, courses };
   } catch (err) {
     throw err;
   }
-}
+};
 
-module.exports = { addFaculty, addStudent, addCourse, allCourses, allStudents, allFaculties,getStats };
+// Add course
+const addCourse = async (course) => {
+  const { courseName, courseCode, department, semester, credits } = course;
+  try {
+    await pool.promise().query(
+      `INSERT INTO courses (course_code, course_name, department, semester, credits, created_at, updated_at)
+       VALUES (?, ?, ?, ?, ?, NOW(), NOW())`,
+      [courseCode, courseName, department, semester, credits]
+    );
+    return { success: true };
+  } catch (err) {
+    throw err;
+  }
+};
+
+// All students
+const allStudents = async () => {
+  try {
+    const [rows] = await pool.promise().query(
+      `SELECT s.id, u.username, s.regno, s.department, u.mail_id, s.updated_at
+       FROM students s
+       JOIN userAccess u ON s.user_id = u.id`
+    );
+    return { success: true, students: rows };
+  } catch (err) {
+    throw err;
+  }
+};
+
+// All faculties
+const allFaculties = async () => {
+  try {
+    const [rows] = await pool.promise().query(
+      `SELECT f.id, u.username, f.department, u.mail_id, f.updated_at
+       FROM faculty f
+       JOIN userAccess u ON f.user_id = u.id`
+    );
+    return { success: true, faculty: rows };
+  } catch (err) {
+    throw err;
+  }
+};
+
+// Stats
+const getStats = async () => {
+  try {
+    const [[students]] = await pool.promise().query("SELECT COUNT(*) as count FROM students");
+    const [[faculty]]  = await pool.promise().query("SELECT COUNT(*) as count FROM faculty");
+    const [[courses]]  = await pool.promise().query("SELECT COUNT(*) as count FROM courses");
+    const [[logs]]     = await pool.promise().query("SELECT COUNT(*) as count FROM audit_logs");
+
+    return {
+      totalStudents: students.count,
+      totalFaculty: faculty.count,
+      totalCourses: courses.count,
+      totalLogs: logs.count,
+    };
+  } catch (err) {
+    throw err;
+  }
+};
+
+module.exports = { addFaculty, addStudent, addCourse, allCourses, allStudents, allFaculties, getStats };
