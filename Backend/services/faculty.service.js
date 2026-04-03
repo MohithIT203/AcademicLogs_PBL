@@ -71,6 +71,7 @@ const markAttendance = async ({
   status,
   markedBy,
   actorId,
+  updatedAt,
   actorRole = "",
   ipAddress = "",
   userAgent = "",
@@ -78,9 +79,9 @@ const markAttendance = async ({
   try {
     const [result] = await pool.promise().query(
       `INSERT INTO attendance
-         (student_id, course_id, session_date, status, marked_by, created_at)
-       VALUES (?, ?, ?, ?, ?, NOW())
-       ON DUPLICATE KEY UPDATE status = VALUES(status), updated_at = NOW()`,
+         (student_id, course_id, session_start,session_date, status, marked_by, created_at)
+       VALUES (?, ?,NOW(), ?, ?, ?, NOW())
+       ON DUPLICATE KEY UPDATE status = VALUES(status)`,
       [studentId, courseId, sessionDate, status, markedBy]
     );
 

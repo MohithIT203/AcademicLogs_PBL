@@ -135,20 +135,11 @@ const getAllCourses = async (req, res) => {
 
 // Get all students
 const getAllStudents = async (req, res) => {
-  try {
-    const students = await StudentService.allStudents();
-    res.status(200).json({
-      output: "Success",
-      message: "Students retrieved successfully",
-      data: students,
-    });
-  } catch (err) {
-    res.status(500).json({
-      output: "Failed",
-      message: "Error retrieving students",
-      error: err.message,
-    });
-  }
+  const result = await StudentService.allStudents();
+  res.status(200).json({
+    output: "Success",
+    data: result, 
+  });
 };
 
 // Get all faculties
@@ -186,6 +177,76 @@ const getStats = async (req, res) => {
   }
 };
 
+const getPtScores = async (req, res) => {
+  const { studentId } = req.params;
+
+  if (!studentId) {
+    return res.status(400).json({ output: "Failed", message: "studentId is required" });
+  }
+
+  try {
+    const data = await StudentService.getPtScores(studentId);
+    return res.status(200).json({
+      output: "Success",
+      message: "PT scores retrieved successfully",
+      data,
+    });
+  } catch (err) {
+    return res.status(500).json({
+      output: "Failed",
+      message: "Error retrieving PT scores",
+      error: err.message,
+    });
+  }
+};
+
+const getSemesterScores = async (req, res) => {
+  const { studentId } = req.params;
+
+  if (!studentId) {
+    return res.status(400).json({ output: "Failed", message: "studentId is required" });
+  }
+
+  try {
+    const data = await StudentService.getSemesterScores(studentId);
+    return res.status(200).json({
+      output: "Success",
+      message: "Semester scores retrieved successfully",
+      data,
+    });
+  } catch (err) {
+    return res.status(500).json({
+      output: "Failed",
+      message: "Error retrieving semester scores",
+      error: err.message,
+    });
+  }
+};
+
+const getStudentAttendance = async (req, res) => {
+  const { studentId } = req.params;
+
+  if (!studentId) {
+    return res.status(400).json({ output: "Failed", message: "studentId is required" });
+  }
+
+  try {
+    const data = await StudentService.getStudentAttendance(studentId);
+    return res.status(200).json({
+      output: "Success",
+      message: "Attendance retrieved successfully",
+      data,
+    });
+  } catch (err) {
+    return res.status(500).json({
+      output: "Failed",
+      message: "Error retrieving attendance",
+      error: err.message,
+    });
+  }
+};
+
+
 module.exports = {
   addFaculty,
   addStudent,
@@ -194,4 +255,7 @@ module.exports = {
   getAllFaculty,
   getAllCourses,
   getStats,
+  getPtScores,
+  getSemesterScores,
+  getStudentAttendance
 };

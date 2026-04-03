@@ -1,8 +1,10 @@
 const StudentService = require("../services/student.service");
-const CourseService =require("../services/faculty.service")
-// Get periodic test scores for a student
+const CourseService =require("../services/faculty.service");
+// const { getStudentCourses } = require(".../ser");
+
+
 const getPtscores = async(req, res) => {
-    const studentId = req.params.id; // Get from URL params
+    const studentId = req.params.id; 
     
     if (!studentId) {
         return res.status(400).json({ 
@@ -74,7 +76,29 @@ const getAttendance = async(req, res) => {
         });
     }
 }
-
+const fetchStudentCourses = async (req, res) => {
+  try {
+   
+    const userId = req.user?.id;
+ 
+    if (!userId) {
+      return res.status(401).json({ success: false, message: "Unauthorized" });
+    }
+ 
+    const result = await StudentService.getStudentCourses(userId);
+ 
+    if (!result.success) {
+      return res.status(404).json(result);
+    }
+ 
+    return res.status(200).json(result);
+ 
+  } catch (err) {
+    console.error("fetchStudentCourses error:", err);
+    return res.status(500).json({ success: false, message: "Internal server error" });
+  }
+};
+ 
 // const getCourses = async (req, res) => {
 //   try {
 //     const result = await CourseService.allCourses();
@@ -84,4 +108,4 @@ const getAttendance = async(req, res) => {
 //   }
 // };
 
-module.exports = { getPtscores, getsemesterscores, getAttendance };
+module.exports = { getPtscores, getsemesterscores, getAttendance, fetchStudentCourses };

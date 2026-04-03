@@ -124,16 +124,12 @@ const addCourse = async (course) => {
 
 // All students
 const allStudents = async () => {
-  try {
-    const [rows] = await pool.promise().query(
-      `SELECT s.id, u.username, s.regno, s.department, u.mail_id, s.updated_at
-       FROM students s
-       JOIN userAccess u ON s.user_id = u.id`
-    );
-    return { success: true, students: rows };
-  } catch (err) {
-    throw err;
-  }
+  const [rows] = await pool.promise().query(
+    `SELECT s.id AS student_id, u.username, s.regno, s.department, u.mail_id, s.updated_at
+     FROM students s
+     JOIN userAccess u ON s.user_id = u.id`
+  );
+  return { success: true, students: rows };
 };
 
 // All faculties
@@ -168,5 +164,77 @@ const getStats = async () => {
     throw err;
   }
 };
+const getPtScores = async (studentId) => {
+  try {
+    const [rows] = await pool.promise().query(
+      `SELECT 
+        p.id,
+        p.pt_test_no,
+        p.marks,
+        c.course_name,
+        c.course_code,
+        u.username AS corrected_by_name,
+        p.created_at
+       FROM pt_exams p
+       JOIN courses c ON p.course_id = c.id
+       LEFT JOIN userAccess u ON p.corrected_by = u.id
+       WHERE p.student_id = ?
+       ORDER BY p.pt_test_no ASC, c.course_name ASC`,
+      [studentId]
+    );
+    return rows;
+  } catch (err) {
+    throw err;
+  }
+};
 
-module.exports = { addFaculty, addStudent, addCourse, allCourses, allStudents, allFaculties, getStats };
+const getSemesterScores = async (studentId) => {
+  try {
+    const [rows] = await pool.promise().query(
+      `SELECT 
+        e.id,
+        e.semester_no,
+        e.grade,
+        c.course_name,
+        c.course_code,
+        c.credits,
+        e.created_at
+       FROM endsemScores e
+       JOIN courses c ON e.course_id = c.id
+       WHERE e.student_id = ?
+       ORDER BY e.semester_no ASC, c.course_name ASC`,
+      [studentId]
+    );
+    return rows;
+  } catch (err) {
+    throw err;
+  }
+};
+
+const getStudentAttendance = async (studentId) => {
+  try {
+    const [rows] = await pool.promise().query(
+      `SELECT 
+        a.id,
+        a.session_date,
+        a.session_start,
+        a.session_end,
+        a.status,
+        c.course_name,
+        c.course_code,
+        u.username AS marked_by_name
+       FROM attendance a
+       JOIN courses c ON a.course_id = c.id
+       JOIN userAccess u ON a.marked_by = u.id
+       WHERE a.student_id = ?
+       ORDER BY a.session_date DESC`,
+      [studentId]
+    );
+    return rows;
+  } catch (err) {
+    throw err;
+  }
+};
+
+
+module.exports = { addFaculty, addStudent, addCourse, allCourses, allStudents, allFaculties, getStats,getPtScores,getSemesterScores,getStudentAttendance };

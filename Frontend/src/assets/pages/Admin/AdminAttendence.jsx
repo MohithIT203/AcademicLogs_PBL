@@ -25,7 +25,7 @@ const studentList = raw?.data?.students || [];
       // Fetch all attendance in parallel
       const attResults = await Promise.allSettled(
         studentList.map((s) =>
-          axios.get(`${baseURL}/attendance/${s.student_id}`, { withCredentials: true })
+          axios.get(`${baseURL}/student-attendance/${s.student_id}`, { withCredentials: true })
         )
       );
 

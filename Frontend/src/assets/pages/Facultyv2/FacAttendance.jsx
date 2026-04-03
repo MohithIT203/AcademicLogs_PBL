@@ -42,8 +42,9 @@ function FacultyAttendance() {
       setAttendance(attRes.data.data || []);
       setStudents(studRes.data.data || []);
       setCourses(courseRes.data.data || []);
-      // ✅ Fixed: was permRes.data.editEnabled
+      
       setEditEnabled(permRes.data.data?.editEnabled || false);
+      console.log(studRes.data.data);
     } catch (err) {
       console.error(err);
     } finally {
@@ -198,7 +199,7 @@ function FacultyAttendance() {
               >
                 <option value="">All Students</option>
                 {students.map((s) => (
-                  <option key={s.id} value={s.id}>
+                  <option key={s.id} value={s.student_id}>
                     {s.username || s.name}
                   </option>
                 ))}
@@ -215,7 +216,7 @@ function FacultyAttendance() {
               >
                 <option value="">All Courses</option>
                 {courses.map((c) => (
-                  <option key={c.id} value={c.id}>
+                  <option key={c.id} value={c.course_id}>
                     {c.course_name}
                   </option>
                 ))}
@@ -255,7 +256,7 @@ function FacultyAttendance() {
             >
               <option value="">Select Student</option>
               {students.map((s) => (
-                <option key={s.id} value={s.id}>
+                <option key={s.id} value={s.student_id}>
                   {s.username || s.name}
                 </option>
               ))}
@@ -270,7 +271,7 @@ function FacultyAttendance() {
             >
               <option value="">Select Course</option>
               {courses.map((c) => (
-                <option key={c.id} value={c.id}>
+                <option key={c.id} value={c.course_id}>
                   {c.course_name}
                 </option>
               ))}

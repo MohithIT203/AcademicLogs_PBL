@@ -1,3 +1,4 @@
+const { get } = require("lodash");
 const pool = require("../db.js");
 
 //Get Periodic Test Scores for a Student
@@ -19,6 +20,7 @@ const getptScores = async (id) => {
     throw err;
   }
 };
+
 //Get semester Scores for a Student
 const getSemesterScores = async (id) => {
   try {
@@ -72,5 +74,39 @@ const getAttendance = async (id) => {
     throw err;
   }
 };
-
-module.exports = { getptScores, getSemesterScores, getAttendance };
+const getStudentCourses = async (userId) => {
+  try {
+    // Step 1: Get the student's department using their user_id
+    const [studentRows] = await pool.promise().query(
+      `SELECT id, regno, department 
+       FROM AcademicLogs.students 
+       WHERE user_id = ?`,
+      [userId]
+    );
+ 
+    if (studentRows.length === 0) {
+      return { success: false, message: "Student record not found" };
+    }
+ 
+    const { department } = studentRows[0];
+ 
+    // Step 2: Fetch all courses belonging to that department
+    const [courseRows] = await pool.promise().query(
+      `SELECT id, course_code, course_name, department, semester, credits 
+       FROM AcademicLogs.courses 
+       WHERE department = ?
+       ORDER BY semester ASC, course_name ASC`,
+      [department]
+    );
+ 
+    return {
+      success: true,
+      data: courseRows,
+    };
+ 
+  } catch (err) {
+    console.error("getStudentCourses error:", err);
+    throw err;
+  }
+};
+module.exports = { getptScores, getSemesterScores, getAttendance,getStudentCourses};

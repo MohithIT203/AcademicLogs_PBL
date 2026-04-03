@@ -5,13 +5,14 @@ import KeyIcon from "@mui/icons-material/Key";
 import { auth, provider } from "./firebase.js";
 import { signInWithPopup } from "firebase/auth";
 import axios from "axios";
-
+import { useAuth } from "../Context/AuthContext.jsx";
 
 const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+  const { setUser } = useAuth();
   const navigate = useNavigate();
 
   const handleGoogleSignIn = () => {
@@ -30,45 +31,44 @@ const Login = () => {
   
 
 const handlelogin = async (loginemail) => {
-  const loginId = loginemail || email;
-  
-  if (!loginId && !password) {
-    setError("Please enter email and password");
-    return;
-  }
+    const loginId = loginemail || email;
 
-  try {
-    setLoading(true);
-    setError("");
-    
-    const response = await axios.post(
-      `${import.meta.env.VITE_SERVER_APP_URL}/login`,
-      { email: loginId, password: password },
-      { withCredentials: true }
-    );
-    
-    localStorage.setItem("role", response.data.role);
-    
-    // Route based on role
-    const roleRoutes = {
-      admin: "/dashboard",
-      faculty: "/faculty/dashboard",
-      student: "/student/dashboard",
-      super_admin: "/dashboard",
-    };
-    
-    const redirectPath = roleRoutes[response.data.role] || "/student/dashboard";
-    navigate(redirectPath, { state: response.data });
-        
-  } catch (err) {
-    console.error(err);
-    setError(err.response?.data?.message || "Login failed. Please try again.");
-  } finally {
-    setLoading(false);
-  }
-};
+    if (!loginId && !password) {
+      setError("Please enter email and password");
+      return;
+    }
 
+    try {
+      setLoading(true);
+      setError("");
 
+      const response = await axios.post(
+        `${import.meta.env.VITE_SERVER_APP_URL}/login`,
+        { email: loginId, password: password },
+        { withCredentials: true }
+      );
+
+      setUser(response.data); // ← ADD THIS — syncs AuthContext immediately
+
+      localStorage.setItem("role", response.data.role); // optional, can remove
+
+      const roleRoutes = {
+        admin: "/dashboard",
+        faculty: "/faculty/dashboard",
+        student: "/student/dashboard",
+        super_admin: "/dashboard",
+      };
+
+      const redirectPath = roleRoutes[response.data.role] || "/student/dashboard";
+      navigate(redirectPath);
+
+    } catch (err) {
+      console.error(err);
+      setError(err.response?.data?.message || "Login failed. Please try again.");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-gray-100">

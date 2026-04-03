@@ -31,7 +31,7 @@ function AdminTable({
 
   return (
     <div className="w-full">
-      {/* ================= DESKTOP TABLE ================= */}
+     
       <div className="hidden md:block overflow-x-auto">
         <div className="min-w-[700px] bg-white rounded-xl shadow-md overflow-hidden border border-gray-200">
           <table className="w-full border-collapse text-sm">
@@ -82,7 +82,7 @@ function AdminTable({
         </div>
       </div>
 
-      {/* ================= MOBILE CARDS ================= */}
+    
       <div className="md:hidden flex flex-col gap-4 mt-4">
         {data.map((row, index) => (
           <div
@@ -98,14 +98,14 @@ function AdminTable({
           >
             {columns.map((col) => (
               <div key={col.key} className="mb-3 flex justify-between items-center">
-                <p className="text-xs font-semibold text-gray-500 uppercase">
+                <span className="text-xs font-semibold text-gray-500 uppercase">
                   {col.label}
-                </p>
-                <p className="text-sm font-medium text-gray-800">
+                </span>
+                <span className="text-sm font-medium text-gray-800">
                   {col.render
                     ? col.render(row[col.key], row)
                     : row[col.key]}
-                </p>
+                </span>
               </div>
             ))}
           </div>

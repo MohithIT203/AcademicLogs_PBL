@@ -50,7 +50,8 @@ const markAttendance = async (req, res) => {
   if (!studentId || !courseId || !sessionDate || !status) {
     return res.status(400).json({ output: "Failed", message: "studentId, courseId, sessionDate and status are required" });
   }
-
+  
+  // console.log(req.body);
   try {
     await facultyService.markAttendance({
       studentId,
@@ -62,6 +63,7 @@ const markAttendance = async (req, res) => {
       actorRole,
       ipAddress,
       userAgent,
+   
     });
     res.status(201).json({ output: "Success", message: "Attendance recorded" });
   } catch (err) {
@@ -112,7 +114,7 @@ const addPtScore = async (req, res) => {
   if (!studentId || !courseId || ptTestNo == null || marks == null) {
     return res.status(400).json({ output: "Failed", message: "studentId, courseId, ptTestNo and marks are required" });
   }
-
+  // console.log(req.body);
   try {
     await facultyService.addPtScore({
       studentId,

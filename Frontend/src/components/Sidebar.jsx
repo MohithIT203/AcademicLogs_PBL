@@ -1,4 +1,4 @@
-import { NavLink } from "react-router-dom";
+import { NavLink,useNavigate } from "react-router-dom";
 import { useAuth } from "../assets/pages/Context/AuthContext.jsx";
 import { 
   X,
@@ -13,10 +13,11 @@ import {
   CalendarCheck,
   NotebookPen
  } from "lucide-react";
+import axios from "axios";
 
 const Sidebar = ({ open, setOpen }) => {
-   const { user } = useAuth();
-
+   const { user, setUser } = useAuth();
+    const navigate = useNavigate();
   const items = {
   admin: [
     { name: "Dashboard", path: "/dashboard", icon: LayoutDashboard },
@@ -44,9 +45,21 @@ const Sidebar = ({ open, setOpen }) => {
   ],
 };
   const navItemsRoleBased = items[user?.role] || [];
-  function handlelogout(){
-    
+    async function handlelogout() {
+    try {
+      await axios.post(
+        `${import.meta.env.VITE_SERVER_APP_URL}/logout`,
+        {},
+        { withCredentials: true }
+      );
+    } catch (err) {
+      console.error("Logout failed:", err);
+    } finally {
+      setUser(null);        
+      navigate("/");
+    }
   }
+
   return (
     <>
       {open && (

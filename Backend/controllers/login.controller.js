@@ -43,5 +43,16 @@ const login = async (req, res) => { //google sign-in
     });
   }
 };
+const logout = (req, res) => {
+  res.clearCookie('token', {
+    httpOnly: true,
+    secure: false, 
+    sameSite: 'lax',
+  });
 
-module.exports = { login };
+  return res.status(200).json({
+    output: "Success",
+    message: "Logged out successfully"
+  });
+};
+module.exports = { login,logout };

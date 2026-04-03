@@ -24,8 +24,8 @@ const studentList = raw?.data?.students || [];
       setStudents(studentList);
 
       const [ptResults, semResults] = await Promise.all([
-        Promise.allSettled(studentList.map((s) => axios.get(`${baseURL}/ptscores/${s.student_id}`, { withCredentials: true }))),
-        Promise.allSettled(studentList.map((s) => axios.get(`${baseURL}/semesterscores/${s.student_id}`, { withCredentials: true }))),
+        Promise.allSettled(studentList.map((s) => axios.get(`${baseURL}/scores/${s.student_id}`, { withCredentials: true }))),
+        Promise.allSettled(studentList.map((s) => axios.get(`${baseURL}/semester-scores/${s.student_id}`, { withCredentials: true }))),
       ]);
 
       const ptM = {}, semM = {};
