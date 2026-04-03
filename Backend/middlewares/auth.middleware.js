@@ -1,6 +1,6 @@
 const jwt = require('jsonwebtoken');
 const cookieParser=require('cookie-parser');
-const db = require("../db"); // your mysql2/promise pool
+const db = require("../db"); 
 require('dotenv').config();
 
 const protect = (req, res, next) => {

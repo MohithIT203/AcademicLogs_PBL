@@ -21,10 +21,10 @@ const login = async (req, res) => { //google sign-in
     );
 
     res.cookie('token', token, {
-      httpOnly: true,
-      secure: false, // true in production
-      sameSite: 'lax',
-      maxAge: 24 * 60 * 60 * 1000,
+     httpOnly: true,
+  secure: true,       
+  sameSite: "none",   
+  maxAge: 24 * 60 * 60 * 1000,
     });
     
     return res.status(200).json({
@@ -46,8 +46,8 @@ const login = async (req, res) => { //google sign-in
 const logout = (req, res) => {
   res.clearCookie('token', {
     httpOnly: true,
-    secure: false, 
-    sameSite: 'lax',
+    secure: true, 
+    sameSite: 'none',
   });
 
   return res.status(200).json({

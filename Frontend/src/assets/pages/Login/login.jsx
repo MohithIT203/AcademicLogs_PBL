@@ -48,9 +48,9 @@ const handlelogin = async (loginemail) => {
         { withCredentials: true }
       );
 
-      setUser(response.data); // ← ADD THIS — syncs AuthContext immediately
+      setUser(response.data); 
 
-      localStorage.setItem("role", response.data.role); // optional, can remove
+      localStorage.setItem("role", response.data.role); 
 
       const roleRoutes = {
         admin: "/dashboard",
