@@ -23,7 +23,7 @@ function Course() {
           `${import.meta.env.VITE_SERVER_APP_URL}/all-course`,
           { withCredentials: true },
         );
-
+        console.log("Fetched courses:", response.data.data.courses);
         setData(response.data.data.courses || []);
       } catch (err) {
         console.error("Error fetching courses:", err);
@@ -105,11 +105,7 @@ function Course() {
               { key: "department", label: "Department" },
               { key: "semester", label: "Semester" },
               { key: "credits", label: "Credits" },
-              {
-                key: "updated_at",
-                label: "Updated",
-                render: (value) => new Date(value).toLocaleDateString(),
-              },
+              
             ]}
           />
         </div>

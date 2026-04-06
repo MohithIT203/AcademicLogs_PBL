@@ -37,7 +37,7 @@ function AdminTable({
           <table className="w-full border-collapse text-sm">
             
             {/* Header */}
-            <thead className="bg-gradient-to-r from-green-50 to-green-100 text-gray-700">
+            <thead className="bg-gradient-to-r bg-blue-100 text-gray-700">
               <tr>
                 {columns.map((col) => (
                   <th
@@ -55,12 +55,12 @@ function AdminTable({
               {data.map((row, index) => (
                 <tr
                   key={row.id || index}
-                  onClick={() =>
-                    basePath && navigate(`${basePath}/${row.id}`)
-                  }
+                  // onClick={() =>
+                  //   basePath && navigate(`${basePath}/${row.id}`)
+                  // }
                   className={`${
                     basePath
-                      ? "cursor-pointer hover:bg-green-50 transition-colors"
+                      ? "cursor-pointer hover:bg-blue-50 transition-colors"
                       : "hover:bg-gray-50 transition-colors"
                   }`}
                 >
@@ -87,12 +87,12 @@ function AdminTable({
         {data.map((row, index) => (
           <div
             key={row.id || index}
-            onClick={() =>
-              basePath && navigate(`${basePath}/${row.id}`)
-            }
+            // onClick={() =>
+            //   basePath && navigate(`${basePath}/${row.id}`)
+            // }
             className={`p-5 bg-white rounded-lg shadow border border-gray-200 ${
               basePath
-                ? "hover:bg-green-50 cursor-pointer transition-colors"
+                ? "hover:bg-blue-50 cursor-pointer transition-colors"
                 : "hover:bg-gray-50 transition-colors"
             }`}
           >

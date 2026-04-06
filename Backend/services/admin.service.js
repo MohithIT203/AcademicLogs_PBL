@@ -235,6 +235,107 @@ const getStudentAttendance = async (studentId) => {
     throw err;
   }
 };
+const editFaculty = async ({
+  facultyId,
+  username,
+  mail_id,
+  department,
+  actorId,
+  actorRole,
+  ipAddress,
+  userAgent,
+}) => {
+  const connection = await pool.promise();
+  try {
+    
 
+    // 1. Get the user_id linked to this faculty record
+    const [rows] = await connection.execute(
+      `SELECT user_id FROM AcademicLogs.faculty WHERE id = ?`,
+      [facultyId]
+    );
+    if (rows.length === 0) throw new Error("Faculty not found");
 
-module.exports = { addFaculty, addStudent, addCourse, allCourses, allStudents, allFaculties, getStats,getPtScores,getSemesterScores,getStudentAttendance };
+    const userId = rows[0].user_id;
+
+    // 2. Update userAccess
+    await connection.query(
+      `UPDATE AcademicLogs.userAccess
+       SET username = ?, mail_id = ?
+       WHERE id = ?`,
+      [username, mail_id, userId]
+    );
+
+    // 3. Update faculty
+    await connection.query(
+      `UPDATE AcademicLogs.faculty
+       SET department = ?
+       WHERE id = ?`,
+      [department, facultyId]
+    );
+
+    // 4. Audit log
+    await connection.query(
+      `INSERT INTO AcademicLogs.audit_logs
+         (actor_id, actor_role, action, affected_table, affected_record_id, ip_address, user_agent)
+       VALUES (?, ?, 'UPDATE', 'faculty', ?, ?, ?)`,
+      [actorId, actorRole, facultyId, ipAddress, userAgent]
+    );
+    
+  } catch (err) {
+    
+    throw err;
+  }
+};
+
+const editStudent = async ({
+  studentId,
+  username,
+  mail_id,
+  regno,
+  department,
+  actorId,
+  actorRole,
+  ipAddress,
+  userAgent,
+}) => {
+  const connection = await pool.promise();
+  try {
+    
+    const [rows] = await connection.query(
+      `SELECT user_id FROM AcademicLogs.students WHERE id = ?`,
+      [studentId]
+    );
+    if (rows.length === 0) throw new Error("Student not found");
+
+    const userId = rows[0].user_id;
+
+    await connection.query(
+      `UPDATE AcademicLogs.userAccess
+       SET username = ?, mail_id = ?
+       WHERE id = ?`,
+      [username, mail_id, userId]
+    );
+
+    await connection.query(
+      `UPDATE AcademicLogs.students
+       SET regno = ?, department = ?
+       WHERE id = ?`,
+      [regno, department, studentId]
+    );
+
+    await connection.query(
+      `INSERT INTO AcademicLogs.audit_logs
+         (actor_id, actor_role, action, affected_table, affected_record_id, ip_address, user_agent)
+       VALUES (?, ?, 'UPDATE', 'students', ?, ?, ?)`,
+      [actorId, actorRole, studentId, ipAddress, userAgent]
+    );
+
+    
+  } catch (err) {
+    
+    throw err;
+  }
+};
+
+module.exports = { addFaculty, addStudent, addCourse, allCourses, allStudents, allFaculties, getStats,getPtScores,getSemesterScores,getStudentAttendance, editFaculty, editStudent };

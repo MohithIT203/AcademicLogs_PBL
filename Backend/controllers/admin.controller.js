@@ -4,7 +4,6 @@ const CourseService = require("../services/admin.service");
 
 // Add a faculty member
 const addFaculty = async (req, res) => {
-  // FIX: extract audit context just like addStudent does
   const actorId   = req.user.id;
   const actorRole = req.user.role;
   const ipAddress =
@@ -246,6 +245,76 @@ const getStudentAttendance = async (req, res) => {
   }
 };
 
+const editFaculty = async (req, res) => {
+  const actorId   = req.user.id;
+  const actorRole = req.user.role;
+  const ipAddress =
+    req.headers["x-forwarded-for"]?.split(",")[0] ||
+    req.socket.remoteAddress || "";
+  const userAgent = req.headers["user-agent"] || "";
+
+  const { id } = req.params;                         
+  const { username, mail_id, department } = req.body;
+
+  if (!username || !mail_id || !department) {
+    return res.status(400).json({
+      output: "Failed",
+      message: "username, mail_id and department are required",
+    });
+  }
+
+  try {
+    await facultyService.editFaculty({
+      facultyId: id,
+      username,
+      mail_id,
+      department,
+      actorId,
+      actorRole,
+      ipAddress,
+      userAgent,
+    });
+    res.status(200).json({ output: "Success", message: "Faculty updated successfully" });
+  } catch (err) {
+    res.status(500).json({ output: "Failed", message: err.message });
+  }
+};
+
+const editStudent = async (req, res) => {
+  const actorId   = req.user.id;
+  const actorRole = req.user.role;
+  const ipAddress =
+    req.headers["x-forwarded-for"]?.split(",")[0] ||
+    req.socket.remoteAddress || "";
+  const userAgent = req.headers["user-agent"] || "";
+
+  const { id } = req.params;                                   // students.id
+  const { username, mail_id, regno, department } = req.body;
+
+  if (!username || !mail_id || !regno || !department) {
+    return res.status(400).json({
+      output: "Failed",
+      message: "username, mail_id, regno and department are required",
+    });
+  }
+
+  try {
+    await StudentService.editStudent({
+      studentId: id,
+      username,
+      mail_id,
+      regno,
+      department,
+      actorId,
+      actorRole,
+      ipAddress,
+      userAgent,
+    });
+    res.status(200).json({ output: "Success", message: "Student updated successfully" });
+  } catch (err) {
+    res.status(500).json({ output: "Failed", message: err.message });
+  }
+};
 
 module.exports = {
   addFaculty,
@@ -257,5 +326,7 @@ module.exports = {
   getStats,
   getPtScores,
   getSemesterScores,
-  getStudentAttendance
+  getStudentAttendance,
+  editFaculty,
+  editStudent,
 };

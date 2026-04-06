@@ -123,7 +123,8 @@ const updateAttendance = async (
   actorId,
   actorRole = "",
   ipAddress = "",
-  userAgent = ""
+  userAgent = "",
+  
 ) => {
   // const connection = await pool.promise().getConnection();
   try {
@@ -137,7 +138,7 @@ const updateAttendance = async (
     const oldData = oldRows[0];
 
     await pool.promise().query(
-      `UPDATE attendance SET status = ?, updated_at = NOW() WHERE id = ?`,
+      `UPDATE attendance SET status = ? WHERE id = ?`,
       [status, id]
     );
 

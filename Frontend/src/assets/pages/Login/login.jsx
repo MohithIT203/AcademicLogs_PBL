@@ -33,7 +33,7 @@ const Login = () => {
 const handlelogin = async (loginemail) => {
     const loginId = loginemail || email;
 
-    if (!loginId && !password) {
+    if (!loginId && !password.trim()) {
       setError("Please enter email and password");
       return;
     }
@@ -74,7 +74,7 @@ const handlelogin = async (loginemail) => {
     <div className="flex items-center justify-center min-h-screen bg-gray-100">
       <div className="w-full max-w-md p-8 bg-white rounded-lg shadow-md">
         <div>
-          <img src="https://i.pinimg.com/736x/86/d3/3f/86d33fd995f3d658fe0c6770be447c6c.jpg" alt="Logo" className="mx-auto h-16 w-16" />
+          <img src="https://tse1.mm.bing.net/th/id/OIP.a43uoEdvnIHFclASMU2MygHaHa?pid=Api&P=0&h=180" alt="Logo" className="mx-auto h-16 w-16" />
           <h2 className="text-xl text-center font-semibold mb-6">Academic Log Management</h2>
         </div>
 
@@ -87,10 +87,10 @@ const handlelogin = async (loginemail) => {
         <form onSubmit={(e) => { e.preventDefault(); handlelogin(); }}>
           <div className="mb-4">
             <label className="text-gray-700 font-medium mb-2 flex items-center gap-2">
-              <EmailIcon style={{ color: "#24c98b" }} /> Email:
+              <EmailIcon style={{ color: "blue" }} /> Email:
             </label>
             <input
-              className="w-full bg-gray-100 border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-green-500"
+              className="w-full bg-gray-100 border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
               type="email"
               placeholder="Enter your email"
               value={email}
@@ -102,10 +102,10 @@ const handlelogin = async (loginemail) => {
 
           <div className="mb-4">
             <label className="text-gray-700 font-medium mb-2 flex items-center gap-2">
-              <KeyIcon style={{ color: "#24c98b" }} /> Password:
+              <KeyIcon style={{ color: "blue" }} /> Password:
             </label>
             <input
-              className="w-full bg-gray-100 border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-green-500"
+              className="w-full bg-gray-100 border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
               type="password"
               placeholder="Enter your password"
               value={password}
@@ -119,7 +119,7 @@ const handlelogin = async (loginemail) => {
             <button 
               type="submit" 
               disabled={loading}
-              className="w-full bg-green-500 text-white font-medium py-2 rounded-md hover:bg-green-600 transition duration-200 cursor-pointer mb-4 mt-4 disabled:bg-gray-400"
+              className="w-full bg-blue-500 text-white font-medium py-2 rounded-md hover:bg-blue-600 transition duration-200 cursor-pointer mb-4 mt-4 disabled:bg-gray-400"
             >
               {loading ? "Logging in..." : "Login"}
             </button>
@@ -132,7 +132,7 @@ const handlelogin = async (loginemail) => {
           onClick={handleGoogleSignIn}
           disabled={loading}
         >
-          <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/c/c1/Google_%22G%22_logo.svg/800px-Google_%22G%22_logo.svg.png" alt="Google" className="h-5 w-5" />
+          <img src="https://tse1.mm.bing.net/th/id/OIP.kIOgjlB4kxJ5-cB702G08gHaHP?pid=Api&P=0&h=180" alt="Google" className="h-5 w-5" />
           Continue with Google
         </button>
       </div>

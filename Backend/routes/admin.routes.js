@@ -1,5 +1,5 @@
 const router = require("express").Router();
-const {addFaculty,addCourse,getAllFaculty,getAllStudents, addStudent,getAllCourses,getStats,getPtScores,getSemesterScores,getStudentAttendance } = require("../controllers/admin.controller");
+const {addFaculty,addCourse,getAllFaculty,getAllStudents, addStudent,getAllCourses,getStats,getPtScores,getSemesterScores,getStudentAttendance,editFaculty,editStudent} = require("../controllers/admin.controller");
 const{ protect } = require("../middlewares/auth.middleware");
 
 
@@ -14,5 +14,7 @@ router.get("/scores/:studentId", protect, getPtScores);
 router.get("/semester-scores/:studentId", protect, getSemesterScores);
 router.get("/student-attendance/:studentId", protect, getStudentAttendance);
 
+router.put("/edit-faculty/:id", protect, editFaculty);
+router.put("/edit-student/:id", protect, editStudent);
 
 module.exports = router;

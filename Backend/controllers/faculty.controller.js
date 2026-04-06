@@ -85,7 +85,7 @@ const patchAttendance = async (req, res) => {
   }
 
   try {
-    await facultyService.updateAttendance(attendanceId, status, actorId, actorRole, ipAddress, userAgent);
+    await facultyService.updateAttendance(attendanceId, status, actorId, actorRole, ipAddress, userAgent, new Date());
     res.status(200).json({ output: "Success", message: "Attendance updated" });
   } catch (err) {
     res.status(500).json({ output: "Failed", message: "Error updating attendance", error: err.message });

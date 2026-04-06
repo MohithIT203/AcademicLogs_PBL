@@ -37,6 +37,7 @@ const Navbar = ({ setOpen }) => {
         </div>
         <img
           alt="profile"
+          src={`https://ui-avatars.com/api/?name=${user?.username || user?.name}&background=skyblue&color=fff&size=128`}
           className="w-9 h-9 rounded-full border-2 border-blue-600 bg-gray-300"
         />
       </div>
